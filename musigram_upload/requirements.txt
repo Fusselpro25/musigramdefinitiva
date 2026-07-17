@@ -1,0 +1,5 @@
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+telethon==1.36.0
+tinytag==2.2.1
+python-multipart==0.0.9
