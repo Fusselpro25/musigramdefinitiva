@@ -253,6 +253,14 @@
                                 <div><strong>Usuario/Teléfono:</strong> <span id="auth-phone-val">-</span></div>
                                 <div><strong>Estado del Servidor:</strong> <span class="badge badge-success">Activo</span></div>
                             </div>
+                            
+                            <!-- Session String for Render -->
+                            <div id="render-session-container" class="form-group mt-3 hidden" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; text-align: left;">
+                                <label style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500; color: #fbbf24;">🔑 Sesión de Render Persistente</label>
+                                <textarea id="telegram_session_string" readonly rows="2" onclick="this.select()" style="width: 100%; background: rgba(0,0,0,0.25); border: 1px solid rgba(251,191,36,0.2); border-radius: var(--radius-sm); color: #fbbf24; padding: 8px; font-family: monospace; font-size: 0.75rem; resize: none; outline: none;"></textarea>
+                                <span class="form-tip" style="color: #fbbf24; opacity: 0.85; margin-top: 4px; display: block;">Copia esta clave de sesión y añádela como la variable de entorno <strong><code>TELEGRAM_SESSION</code></strong> en Render para que no se cierre la sesión al reiniciar.</span>
+                            </div>
+
                             <button type="button" class="btn btn-secondary btn-block mt-3" id="btn-change-tg-account">
                                 Cambiar de Cuenta / Cerrar Sesión
                             </button>
