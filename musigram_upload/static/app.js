@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
         adminUsername: document.getElementById('admin_username'),
         adminPassword: document.getElementById('admin_password'),
         settingsContentWrapper: document.getElementById('settings-content-wrapper'),
+        renderSessionContainer: document.getElementById('render-session-container'),
+        telegramSessionString: document.getElementById('telegram_session_string'),
     };
 
     // ==========================================================================
@@ -632,6 +634,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res.status === 'authorized') {
                 showToast('¡Inicio de sesión exitoso!', 'success');
                 el.tgVerifyForm.classList.add('hidden');
+                if (res.session_string) {
+                    el.telegramSessionString.value = res.session_string;
+                    el.renderSessionContainer.classList.remove('hidden');
+                } else {
+                    el.renderSessionContainer.classList.add('hidden');
+                }
                 updateSystemStatus();
             } else if (res.status === 'password_required') {
                 showToast('Verificación en dos pasos (2FA) requerida.', 'warning');
@@ -660,6 +668,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res.status === 'authorized') {
                 showToast('¡Inicio de sesión exitoso con 2FA!', 'success');
                 el.tgPasswordForm.classList.add('hidden');
+                if (res.session_string) {
+                    el.telegramSessionString.value = res.session_string;
+                    el.renderSessionContainer.classList.remove('hidden');
+                } else {
+                    el.renderSessionContainer.classList.add('hidden');
+                }
                 updateSystemStatus();
             } else {
                 showToast(res.message || 'Contraseña incorrecta.', 'error');
