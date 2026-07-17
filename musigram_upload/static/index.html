@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Music Downloader & Organizer</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Background Blur Decorative Circles -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <header class="main-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18V5l12-2v13"></path>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="16" r="3"></circle>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>MusiGram</h1>
+                    <span class="subtext">DJ Auto-Downloader</span>
+                </div>
+            </div>
+            
+            <nav class="nav-tabs">
+                <button class="nav-btn active" data-tab="downloads">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Descargas</span>
+                </button>
+                <button class="nav-btn" data-tab="settings">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    <span>Ajustes</span>
+                </button>
+            </nav>
+
+            <div class="system-status">
+                <div class="status-indicator">
+                    <span class="status-dot disconnected" id="status-dot"></span>
+                    <span class="status-text" id="status-text">Cargando...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- TAB: DOWNLOADS -->
+            <section id="tab-downloads" class="tab-pane active">
+                <div class="grid-layout">
+                    <!-- Request Music Card -->
+                    <div class="card glass request-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Solicitar Música</h2>
+                            <p class="card-subtitle">Pide una canción por su nombre, artista o enlace (Spotify, YouTube, Soundcloud, etc.)</p>
+                        </div>
+                        
+                        <form id="download-form" class="standard-form">
+                            <div class="form-group">
+                                <label for="request_text">Nombre o Enlace de la Canción</label>
+                                <div class="input-with-icon">
+                                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <input type="text" id="request_text" placeholder="Ej: Travis Scott - Goosebumps o enlace de YouTube" required autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category_select">Categoría / Carpeta de Destino</label>
+                                <div class="select-wrapper">
+                                    <select id="category_select">
+                                        <option value="Automático">⚡ Clasificación Automática (ID3/Tags)</option>
+                                        <!-- Dynamic options injected by JS -->
+                                    </select>
+                                </div>
+                                <span class="form-tip">La clasificación automática utiliza los metadatos de la canción para guardarla en la carpeta adecuada.</span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block" id="btn-submit-download">
+                                <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                                Solicitar Canción
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Downloads Feed Card -->
+                    <div class="card glass list-card">
+                        <div class="card-header list-header">
+                            <div>
+                                <h2 class="card-title">Historial de Descargas</h2>
+                                <p class="card-subtitle">Monitoreo de descargas activas y completadas</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" id="btn-clear-downloads">
+                                <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Limpiar Lista
+                            </button>
+                        </div>
+
+                        <div class="downloads-list" id="downloads-container">
+                            <!-- Placeholder when list is empty -->
+                            <div class="empty-state" id="empty-state">
+                                <div class="empty-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M9 17H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4"></path>
+                                        <polyline points="17 21 12 16 7 21"></polyline>
+                                        <line x1="12" y1="16" x2="12" y2="9"></line>
+                                    </svg>
+                                </div>
+                                <h3>Sin descargas activas</h3>
+                                <p>Las canciones solicitadas aparecerán aquí con su estado y progreso de descarga en tiempo real.</p>
+                            </div>
+                            <!-- Dynamic items injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: SETTINGS -->
+            <section id="tab-settings" class="tab-pane">
+                <!-- Admin Login Card -->
+                <div class="card glass auth-card" id="admin-login-card" style="max-width: 450px; margin: 40px auto; padding: 30px;">
+                    <div class="card-header" style="text-align: center; margin-bottom: 24px;">
+                        <h2 class="card-title" style="font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Acceso de Administrador</h2>
+                        <p class="card-subtitle" style="font-size: 0.85rem; opacity: 0.7; margin-top: 8px;">Inicia sesión para ver y modificar los ajustes del servidor</p>
+                    </div>
+                    
+                    <form id="admin-login-form" class="standard-form">
+                        <div class="form-group" style="margin-bottom: 18px;">
+                            <label for="admin_username" style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500; color: #e2e8f0;">Usuario</label>
+                            <input type="text" id="admin_username" placeholder="admin" required autocomplete="username" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; padding: 10px 12px; outline: none; font-size: 0.9rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 24px;">
+                            <label for="admin_password" style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500; color: #e2e8f0;">Contraseña</label>
+                            <input type="password" id="admin_password" placeholder="••••••••" required autocomplete="current-password" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; padding: 10px 12px; outline: none; font-size: 0.9rem;">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" id="btn-admin-login">
+                            Iniciar Sesión
+                        </button>
+                    </form>
+                </div>
+
+                <div class="grid-layout hidden" id="settings-content-wrapper">
+                    <!-- Telegram Connection Card -->
+                    <div class="card glass">
+                        <div class="card-header">
+                            <h2 class="card-title">Conexión con Telegram</h2>
+                            <p class="card-subtitle">Configura las credenciales de tu cuenta para interactuar con el bot de música</p>
+                        </div>
+                        
+                        <!-- Form 1: Enter Credentials -->
+                        <form id="tg-setup-form" class="standard-form">
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="api_id">API ID</label>
+                                    <input type="text" id="api_id" placeholder="Ej: 123456" required>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="api_hash">API Hash</label>
+                                    <input type="password" id="api_hash" placeholder="Ej: a1b2c3d4..." required>
+                                </div>
+                            </div>
+                            <span class="form-tip mb-3">Obtén tu API ID y Hash gratis en <a href="https://my.telegram.org" target="_blank" class="link">my.telegram.org</a>.</span>
+
+                            <div class="form-group">
+                                <label for="phone">Número de Teléfono</label>
+                                <input type="tel" id="phone" placeholder="Ej: +34600123456" required>
+                                <span class="form-tip">Formato internacional con código de país (+34 para España).</span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block" id="btn-tg-setup">
+                                Enviar Código de Verificación
+                            </button>
+                        </form>
+
+                        <!-- Form 2: Verification Code (Hidden initially) -->
+                        <form id="tg-verify-form" class="standard-form hidden">
+                            <div class="alert alert-info">
+                                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                                <span>Te hemos enviado un código de confirmación a tu aplicación de Telegram. Por favor, introdúcelo a continuación.</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="verify_code">Código de Telegram</label>
+                                <input type="text" id="verify_code" placeholder="Ej: 12345" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block" id="btn-tg-verify">
+                                Verificar Código
+                            </button>
+                        </form>
+
+                        <!-- Form 3: 2FA Password (Hidden initially) -->
+                        <form id="tg-password-form" class="standard-form hidden">
+                            <div class="alert alert-warning">
+                                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                                <span>Tu cuenta tiene habilitada la verificación en dos pasos (2FA). Ingresa tu contraseña adicional.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="verify_password">Contraseña 2FA</label>
+                                <input type="password" id="verify_password" placeholder="Tu contraseña de Telegram" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block" id="btn-tg-password">
+                                Iniciar Sesión con Contraseña
+                            </button>
+                        </form>
+
+                        <!-- Authorized Status State (Hidden initially) -->
+                        <div id="tg-authorized-state" class="authorized-box hidden">
+                            <div class="auth-icon-badge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <h3>¡Sesión Autorizada con Éxito!</h3>
+                            <p>Tu PC ya está conectado a tu cuenta de Telegram y listo para recibir y procesar descargas en segundo plano.</p>
+                            <div class="auth-details">
+                                <div><strong>Usuario/Teléfono:</strong> <span id="auth-phone-val">-</span></div>
+                                <div><strong>Estado del Servidor:</strong> <span class="badge badge-success">Activo</span></div>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-block mt-3" id="btn-change-tg-account">
+                                Cambiar de Cuenta / Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Application & Folder Config Card -->
+                    <div class="card glass">
+                        <div class="card-header">
+                            <h2 class="card-title">Configuración del Sistema</h2>
+                            <p class="card-subtitle">Define las rutas de almacenamiento en Google Drive y reglas de organización</p>
+                        </div>
+
+                        <form id="system-config-form" class="standard-form">
+                            <div class="form-group">
+                                <label for="bot_username">Usuario del Bot de Música</label>
+                                <div class="input-with-prefix">
+                                    <span class="input-prefix">@</span>
+                                    <input type="text" id="bot_username" placeholder="deezload2bot" required>
+                                </div>
+                                <span class="form-tip">El bot de Telegram al que se le enviarán las peticiones de música.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="base_path">Ruta de Google Drive en PC</label>
+                                <input type="text" id="base_path" placeholder="G:\Mi unidad\Música" required>
+                                <div id="drive-status-badge" class="mt-1">
+                                    <!-- Dynamic badge -->
+                                </div>
+                                <span class="form-tip">Ubicación donde se guardarán las canciones. Las carpetas de categorías se crearán automáticamente aquí.</span>
+                            </div>
+
+                            <!-- Categories Config -->
+                            <div class="form-group">
+                                <label>Reglas de Clasificación (Palabras Clave)</label>
+                                <div class="categories-rules" id="categories-rules-container">
+                                    <!-- Dynamic list of categories and input fields -->
+                                </div>
+                                <span class="form-tip mt-2">Introduce palabras clave separadas por comas. Si el género de la canción o su nombre contiene alguna de estas palabras, se clasificará en esa carpeta.</span>
+                            </div>
+
+                            <!-- Sync Library Section -->
+                            <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; margin-top: 16px;">
+                                <label style="display: block; margin-bottom: 8px;">Biblioteca de Música</label>
+                                <button type="button" class="btn btn-secondary btn-block" id="btn-sync-library" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+                                        <polyline points="23 4 23 10 17 10"></polyline>
+                                        <polyline points="1 20 1 14 7 14"></polyline>
+                                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                                    </svg>
+                                    Sincronizar Biblioteca (Escanear Duplicados)
+                                </button>
+                                <span class="form-tip">Escanea el almacenamiento para registrar las canciones existentes y evitar descargar la misma canción dos veces.</span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block" id="btn-save-config">
+                                Guardar Configuración
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Rclone Configuration Card -->
+                    <div class="card glass">
+                        <div class="card-header">
+                            <h2 class="card-title">Configuración de Google Drive (Nube)</h2>
+                            <p class="card-subtitle">Pega el contenido de tu archivo <code>rclone.conf</code> para la sincronización en la nube</p>
+                        </div>
+                        
+                        <form id="rclone-config-form" class="standard-form">
+                            <div class="form-group">
+                                <label for="rclone_content">Contenido de rclone.conf</label>
+                                <textarea id="rclone_content" rows="8" placeholder="[gdrive]&#10;type = drive&#10;scope = drive&#10;token = ..." style="width: 100%; background: rgba(0,0,0,0.25); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: white; padding: 12px; font-family: monospace; font-size: 0.8rem; resize: vertical; outline: none; transition: var(--transition-smooth);"></textarea>
+                                <span class="form-tip">Pega aquí el archivo <code>rclone.conf</code> de tu PC. Así el servidor de Render se conectará a tu Google Drive de forma privada y segura.</span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block" id="btn-save-rclone-config">
+                                Guardar rclone.conf en Servidor
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast (System feedback) -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main JavaScript Application Logic -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
