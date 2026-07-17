@@ -3,6 +3,7 @@ import asyncio
 import time
 import uuid
 from telethon import TelegramClient, events, types
+from telethon.sessions import StringSession
 from telethon.errors import SessionPasswordNeededError, PhoneCodeInvalidError, PhoneCodeExpiredError
 from app.config import get_config
 from app.classifier import classify_and_move, is_song_duplicate, add_song_to_db
@@ -38,7 +39,11 @@ class TelegramManager:
         if not api_id or not api_hash:
             return None
             
-        self.client = TelegramClient('telegram_user_session', int(api_id), api_hash)
+        session_str = os.environ.get("TELEGRAM_SESSION") or os.environ.get("TELEGRAM_SESSION_STRING") or cfg["telegram"].get("session_string", "")
+        if session_str:
+            self.client = TelegramClient(StringSession(session_str), int(api_id), api_hash)
+        else:
+            self.client = TelegramClient(StringSession(), int(api_id), api_hash)
         return self.client
 
     async def init_client(self):
@@ -259,7 +264,13 @@ class TelegramManager:
         try:
             await client.sign_in(self.phone, code, phone_code_hash=self.phone_code_hash)
             self.register_handlers()
-            return {"status": "authorized"}
+            session_str = client.session.save()
+            from app.config import update_config
+            update_config({"telegram": {"session_string": session_str}})
+            print("==================================================================")
+            print(f"TELEGRAM_SESSION STRING (Copia esto para Render): {session_str}")
+            print("==================================================================")
+            return {"status": "authorized", "session_string": session_str}
         except SessionPasswordNeededError:
             return {"status": "password_required"}
         except (PhoneCodeInvalidError, PhoneCodeExpiredError):
@@ -275,7 +286,13 @@ class TelegramManager:
         try:
             await client.sign_in(password=password)
             self.register_handlers()
-            return {"status": "authorized"}
+            session_str = client.session.save()
+            from app.config import update_config
+            update_config({"telegram": {"session_string": session_str}})
+            print("==================================================================")
+            print(f"TELEGRAM_SESSION STRING (Copia esto para Render): {session_str}")
+            print("==================================================================")
+            return {"status": "authorized", "session_string": session_str}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
