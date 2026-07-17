@@ -142,11 +142,19 @@ async def admin_login(req: LoginRequest):
 
 @app.post("/api/setup", dependencies=[Depends(check_admin_auth)])
 async def setup_telegram(req: SetupRequest):
+    # Retrieve current config to check if hash is masked
+    cfg = get_config()
+    current_hash = cfg["telegram"].get("api_hash", "")
+    new_hash = req.api_hash.strip()
+    
+    if new_hash.startswith("***") and current_hash:
+        new_hash = current_hash
+
     # Save the configs
     update_config({
         "telegram": {
             "api_id": req.api_id.strip(),
-            "api_hash": req.api_hash.strip(),
+            "api_hash": new_hash,
             "phone": req.phone.strip(),
             "bot_username": req.bot_username.strip()
         }
